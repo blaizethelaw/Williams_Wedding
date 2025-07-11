@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jaycee & Emily's Wedding & Reunion Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Styles for the application -->
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #FEFBF6;
+            font-size: 16px;
+        }
+        h1, h2, h3, .font-display {
+            font-family: 'Playfair Display', serif;
+        }
+        .page {
+            display: none;
+        }
+        .page.active {
+            display: block;
+        }
+        .nav-icon.active {
+            color: #047857; /* emerald-700 */
+        }
+        .modal-backdrop {
+            transition: opacity 0.3s ease;
+        }
+        .modal-content {
+            transition: transform 0.3s ease;
+        }
+        .file-input-button {
+            cursor: pointer;
+            display: inline-block;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            background-color: #d1fae5; /* emerald-100 */
+            color: #065f46; /* emerald-800 */
+            border: 1px dashed #6ee7b7; /* emerald-300 */
+            transition: background-color 0.2s;
+        }
+        .file-input-button:hover {
+            background-color: #a7f3d0; /* emerald-200 */
+        }
+        .game-card {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            border: 1px solid #f3f4f6;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        }
+        .gemini-button {
+            background-color: #f0abfc; /* fuchsia-300 */
+            color: #701a75; /* fuchsia-800 */
+            border-color: #e879f9; /* fuchsia-400 */
+        }
+        .gemini-button:hover {
+            background-color: #e879f9;
+        }
+        .love-meter {
+            background: linear-gradient(90deg, #ec4899 0%, #f97316 50%, #eab308 100%);
+            height: 20px;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        .love-meter-fill {
+            position: absolute;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.3);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.7; }
+        }
+        .countdown-digit {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-size: 2rem;
+            font-weight: bold;
+            min-width: 80px;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+        .location-card {
+            transition: all 0.3s ease;
+        }
+        .location-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        }
+        .scavenger-item {
+            transition: all 0.3s ease;
+        }
+        .scavenger-item.completed {
+            background-color: #d1fae5;
+            text-decoration: line-through;
+        }
+    </style>
+</head>
+<body class="bg-[#FEFBF6] text-stone-800 antialiased">
+
+    <!-- Main Application Container -->
+    <div id="app-container" class="hidden">
+        <header class="bg-white/80 backdrop-blur-sm sticky top-0 z-20 shadow-sm border-b border-stone-200">
+            <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+                <h1 class="text-xl font-bold text-stone-800">J&E Wedding Hub</h1>
+                <div id="user-info" class="text-right text-xs text-stone-500">
+                    <p id="user-display-name" class="font-semibold text-stone-700"></p>
+                    <!-- User ID is displayed for collaborative purposes -->
+                    <p>ID: <span id="user-id-display"></span></p>
+                </div>
+            </div>
+        </header>
+
+        <main id="main-content" class="container mx-auto px-4 py-6 pb-32">
+            <!-- Page: Home/Feed -->
+            <div id="page-home" class="page">
+                <!-- Countdown Timer -->
+                <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+                    <h2 class="text-2xl font-bold text-center mb-4">Countdown to the Big Day!</h2>
+                    <div id="countdown" class="flex justify-center gap-3 mb-4">
+                        <div class="text-center"><div class="countdown-digit" id="days">00</div><p class="text-sm mt-2 text-stone-600">Days</p></div>
+                        <div class="text-center"><div class="countdown-digit" id="hours">00</div><p class="text-sm mt-2 text-stone-600">Hours</p></div>
+                        <div class="text-center"><div class="countdown-digit" id="minutes">00</div><p class="text-sm mt-2 text-stone-600">Minutes</p></div>
+                        <div class="text-center"><div class="countdown-digit" id="seconds">00</div><p class="text-sm mt-2 text-stone-600">Seconds</p></div>
+                    </div>
+                    <div class="love-meter rounded-full overflow-hidden"><div class="love-meter-fill" style="width: 100%"></div></div>
+                    <p class="text-center text-sm text-stone-600 mt-2">Love meter: Maximum! 💕</p>
+                </div>
+
+                <!-- Social Feed -->
+                <h3 class="text-xl font-bold mb-4">Event Feed</h3>
+                <div id="feed-posts" class="space-y-4"></div>
+            </div>
+
+            <!-- Page: Schedule -->
+            <div id="page-schedule" class="page">
+                <h2 class="text-3xl font-bold text-center mb-6 text-stone-900">Event Schedule</h2>
+                <div id="schedule-tabs" class="flex justify-center mb-6 space-x-2">
+                    <button onclick="filterSchedule('all', this)" class="schedule-tab px-4 py-2 rounded-lg bg-emerald-600 text-white">All Events</button>
+                    <button onclick="filterSchedule('wedding', this)" class="schedule-tab px-4 py-2 rounded-lg bg-stone-200 text-stone-700">Wedding Only</button>
+                    <button onclick="filterSchedule('reunion', this)" class="schedule-tab px-4 py-2 rounded-lg bg-stone-200 text-stone-700">Reunion Only</button>
+                </div>
+                <div id="schedule-list" class="space-y-4"></div>
+            </div>
+            
+            <!-- Page: Games -->
+            <div id="page-games" class="page">
+                <h2 class="text-3xl font-bold text-center mb-6 text-stone-900">Games & Activities</h2>
+                <div class="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                    <div class="game-card" onclick="openModal('trivia-modal')"><h3 class="text-2xl font-bold text-emerald-700 mb-2">Family Face-Off</h3><p class="text-stone-600">Test your knowledge about Jaycee, Emily, and their families!</p></div>
+                    <div class="game-card" onclick="openModal('bingo-modal')"><h3 class="text-2xl font-bold text-emerald-700 mb-2">Wedding Bingo</h3><p class="text-stone-600">Meet new people and complete fun challenges!</p></div>
+                    <div class="game-card" onclick="openModal('scavenger-modal')"><h3 class="text-2xl font-bold text-emerald-700 mb-2">Myrtle Beach Hunt</h3><p class="text-stone-600">Explore the area and find special locations!</p></div>
+                    <div class="game-card" onclick="openModal('predictions-modal')"><h3 class="text-2xl font-bold text-emerald-700 mb-2">Love Predictions</h3><p class="text-stone-600">Make fun predictions about the couple's future!</p></div>
+                </div>
+                
+                <!-- Live Leaderboard -->
+                <div class="mt-8 bg-white rounded-lg shadow-sm p-6">
+                    <h3 class="text-xl font-bold mb-4">Game Leaderboard</h3>
+                    <div id="leaderboard" class="space-y-2"></div>
+                </div>
+            </div>
+
+            <!-- Page: Photos -->
+            <div id="page-photos" class="page">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-3xl font-bold text-stone-900">Photo Gallery</h2>
+                    <button id="generate-highlight-button" class="gemini-button font-semibold py-2 px-4 rounded-lg text-sm flex items-center">
+                        <span class="mr-2">✨</span> Generate Highlight Reel
+                    </button>
+                </div>
+                <div id="photo-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+            </div>
+            
+            <!-- Page: Guestbook -->
+            <div id="page-guestbook" class="page">
+                <h2 class="text-3xl font-bold text-center mb-6 text-stone-900">Digital Guestbook</h2>
+                <p class="text-center text-stone-600 mb-8 max-w-2xl mx-auto">Leave a heartfelt message for Jaycee & Emily!</p>
+                <div id="guestbook-messages" class="space-y-4"></div>
+            </div>
+
+            <!-- Page: Local Guide -->
+            <div id="page-guide" class="page">
+                <h2 class="text-3xl font-bold text-center mb-4 text-stone-900">Myrtle Beach Guide</h2>
+                <p class="text-center text-stone-600 mb-6">Jaycee & Emily's favorite spots and recommendations!</p>
+                <div class="flex flex-wrap justify-center gap-2 mb-6">
+                    <button onclick="filterGuide('all', this)" class="guide-filter px-4 py-2 rounded-lg bg-emerald-600 text-white text-sm">All</button>
+                    <button onclick="filterGuide('favorites', this)" class="guide-filter px-4 py-2 rounded-lg bg-stone-200 text-stone-700 text-sm">Our Favorites</button>
+                    <button onclick="filterGuide('dining', this)" class="guide-filter px-4 py-2 rounded-lg bg-stone-200 text-stone-700 text-sm">Dining</button>
+                    <button onclick="filterGuide('activities', this)" class="guide-filter px-4 py-2 rounded-lg bg-stone-200 text-stone-700 text-sm">Activities</button>
+                    <button onclick="filterGuide('groups', this)" class="guide-filter px-4 py-2 rounded-lg bg-stone-200 text-stone-700 text-sm">For Groups</button>
+                </div>
+                <div id="guide-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            </div>
+
+            <!-- Page: Guests -->
+            <div id="page-guests" class="page">
+                <h2 class="text-3xl font-bold text-center mb-6 text-stone-900">Guest Directory</h2>
+                <div class="mb-6"><input type="text" id="guest-search" placeholder="Search guests..." class="w-full px-4 py-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none"></div>
+                <div id="guest-list" class="grid md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+            </div>
+        </main>
+
+        <!-- Floating Action Buttons -->
+        <div id="fab-container" class="fixed bottom-28 right-5 z-20"></div>
+
+        <!-- Bottom Navigation -->
+        <nav class="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-sm border-t border-stone-200 shadow-t-sm z-30">
+            <div class="container mx-auto grid grid-cols-4 text-center py-2">
+                <button onclick="showPage('home')" class="nav-icon active flex flex-col items-center text-stone-600 hover:text-emerald-700 transition"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg><span class="text-xs mt-1">Home</span></button>
+                <button onclick="showPage('schedule')" class="nav-icon flex flex-col items-center text-stone-600 hover:text-emerald-700 transition"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg><span class="text-xs mt-1">Schedule</span></button>
+                <button onclick="showPage('games')" class="nav-icon flex flex-col items-center text-stone-600 hover:text-emerald-700 transition"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg><span class="text-xs mt-1">Games</span></button>
+                <button onclick="showPage('photos')" class="nav-icon flex flex-col items-center text-stone-600 hover:text-emerald-700 transition"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg><span class="text-xs mt-1">Photos</span></button>
+                <button onclick="showPage('guestbook')" class="nav-icon flex flex-col items-center text-stone-600 hover:text-emerald-700 transition"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg><span class="text-xs mt-1">Guestbook</span></button>
+                <button onclick="showPage('guide')" class="nav-icon flex flex-col items-center text-stone-600 hover:text-emerald-700 transition"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" /></svg><span class="text-xs mt-1">Guide</span></button>
+                <button onclick="showPage('guests')" class="nav-icon flex flex-col items-center text-stone-600 hover:text-emerald-700 transition"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg><span class="text-xs mt-1">Guests</span></button>
+                 <a href="https://www.amazon.com/wedding/registry/1I8SUL5YPLE9V" target="_blank" class="nav-icon flex flex-col items-center text-stone-600 hover:text-emerald-700 transition"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4l1.25-2.5L12 12l5.25-2.5L18.5 12 12 21 5 12z" /></svg><span class="text-xs mt-1">Registry</span></a>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Login/Welcome Screen -->
+    <div id="login-screen" class="min-h-screen flex items-center justify-center p-4">
+        <div class="max-w-md w-full text-center bg-white p-8 rounded-2xl shadow-lg">
+            <h1 class="text-4xl font-bold text-stone-800 mb-2">Welcome to</h1>
+            <h2 class="text-3xl font-display text-emerald-700 mb-4">Jaycee & Emily's Wedding</h2>
+            <p class="text-stone-600 mb-6">July 27th, 2025 • Myrtle Beach, SC</p>
+            <div class="space-y-4">
+                <input id="display-name-input" type="text" placeholder="Enter your full name" class="w-full px-4 py-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition">
+                <select id="relationship-select" class="w-full px-4 py-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none">
+                    <option value="">How do you know the couple?</option>
+                    <option value="Groom's Family">Groom's Family</option><option value="Bride's Family">Bride's Family</option><option value="Groom's Friend">Groom's Friend</option><option value="Bride's Friend">Bride's Friend</option><option value="Wedding Party">Wedding Party</option><option value="Work Colleague">Work Colleague</option><option value="Other">Other</option>
+                </select>
+                <button id="join-button" class="w-full bg-emerald-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-emerald-700 transition shadow-md">Join the Celebration!</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modals -->
+    <div id="post-modal" class="modal-backdrop fixed inset-0 bg-black bg-opacity-50 z-40 flex items-center justify-center p-4 opacity-0 pointer-events-none"><div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-md p-6 transform scale-95"><h3 class="text-2xl font-bold mb-4">Share a Moment</h3><textarea id="post-text-input" placeholder="Share a memory, well-wish, or update..." class="w-full h-24 p-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none"></textarea><div class="flex justify-between items-center mt-4"><button id="suggest-post-button" class="gemini-button font-semibold py-2 px-3 rounded-lg text-sm flex items-center"><span class="mr-2">✨</span> Suggest a Post</button><div class="flex space-x-3"><button onclick="closeModal('post-modal')" class="px-4 py-2 rounded-lg border border-stone-300 text-stone-700 hover:bg-stone-100">Cancel</button><button id="submit-post-button" class="px-4 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700">Post</button></div></div></div></div>
+    <div id="photo-modal" class="modal-backdrop fixed inset-0 bg-black bg-opacity-50 z-40 flex items-center justify-center p-4 opacity-0 pointer-events-none"><div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-md p-6 transform scale-95"><h3 class="text-2xl font-bold mb-4">Add a Photo</h3><div class="space-y-4"><input type="file" id="photo-file-input" class="hidden" accept="image/*"><label for="photo-file-input" class="file-input-button text-center"><span id="file-chosen-text">Choose a photo...</span></label><textarea id="photo-caption-input" placeholder="Add a caption..." class="w-full h-20 p-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none"></textarea></div><div id="upload-progress-container" class="w-full bg-gray-200 rounded-full h-2.5 mt-4 hidden"><div id="upload-progress-bar" class="bg-emerald-600 h-2.5 rounded-full" style="width: 0%"></div></div><div class="flex justify-end space-x-3 mt-4"><button onclick="closeModal('photo-modal')" class="px-4 py-2 rounded-lg border border-stone-300 text-stone-700 hover:bg-stone-100">Cancel</button><button id="submit-photo-button" class="px-4 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 disabled:bg-emerald-300" disabled>Upload Photo</button></div></div></div>
+    <div id="guestbook-input-modal" class="modal-backdrop fixed inset-0 bg-black bg-opacity-50 z-40 flex items-center justify-center p-4 opacity-0 pointer-events-none"><div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-md p-6 transform scale-95"><h3 class="text-2xl font-bold mb-4">Leave a Message</h3><div id="text-message-form" class="message-form"><textarea id="guestbook-text-input" placeholder="Write your message for Jaycee & Emily..." class="w-full h-32 p-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none mb-4"></textarea><div class="flex justify-between items-center"><button id="suggest-message-button" class="gemini-button font-semibold py-2 px-3 rounded-lg text-sm flex items-center"><span class="mr-2">✨</span> Suggest Message</button><div class="flex space-x-3"><button onclick="closeModal('guestbook-input-modal')" class="px-4 py-2 rounded-lg border border-stone-300 text-stone-700 hover:bg-stone-100">Cancel</button><button id="submit-text-message" class="px-4 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700">Submit</button></div></div></div><div id="audio-message-form" class="message-form hidden"><p class="text-stone-600 mb-4">Press and hold the button to record an audio message.</p><div class="text-center"><button id="record-audio-button" class="bg-red-500 text-white rounded-full p-6 shadow-lg hover:bg-red-600 transition duration-300"><svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg></button><p id="record-status" class="text-sm text-stone-500 mt-3 h-5"></p></div><div class="flex justify-end space-x-3 mt-4"><button onclick="closeModal('guestbook-input-modal')" class="px-4 py-2 rounded-lg border border-stone-300 text-stone-700 hover:bg-stone-100">Cancel</button></div></div></div></div>
+    <div id="trivia-modal" class="modal-backdrop fixed inset-0 bg-black bg-opacity-50 z-40 flex items-center justify-center p-4 opacity-0 pointer-events-none"><div id="trivia-content" class="modal-content bg-white rounded-lg shadow-xl w-full max-w-lg p-6 transform scale-95"></div></div>
+    <div id="bingo-modal" class="modal-backdrop fixed inset-0 bg-black bg-opacity-50 z-40 flex items-center justify-center p-4 opacity-0 pointer-events-none"><div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-lg p-6 transform scale-95"><h3 class="text-2xl font-bold mb-4">Wedding Bingo</h3><p class="text-stone-600 mb-4">Complete these challenges to win!</p><div id="bingo-grid" class="grid grid-cols-3 gap-2"></div><div class="flex justify-end mt-4"><button onclick="closeModal('bingo-modal')" class="px-4 py-2 rounded-lg bg-stone-500 text-white hover:bg-stone-600">Close</button></div></div></div>
+    <div id="scavenger-modal" class="modal-backdrop fixed inset-0 bg-black bg-opacity-50 z-40 flex items-center justify-center p-4 opacity-0 pointer-events-none"><div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-lg p-6 transform scale-95 max-h-[80vh] overflow-y-auto"><h3 class="text-2xl font-bold mb-4">Myrtle Beach Scavenger Hunt</h3><p class="text-stone-600 mb-4">Find these locations and complete the challenges!</p><div id="scavenger-list" class="space-y-3"></div><div class="flex justify-end mt-4 sticky bottom-0 bg-white pt-4"><button onclick="closeModal('scavenger-modal')" class="px-4 py-2 rounded-lg bg-stone-500 text-white hover:bg-stone-600">Close</button></div></div></div>
+    <div id="predictions-modal" class="modal-backdrop fixed inset-0 bg-black bg-opacity-50 z-40 flex items-center justify-center p-4 opacity-0 pointer-events-none"><div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-lg p-6 transform scale-95"><h3 class="text-2xl font-bold mb-4">Love Predictions</h3><p class="text-stone-600 mb-4">Make your predictions about Jaycee & Emily's future!</p><div id="predictions-form" class="space-y-4"></div><div class="flex justify-between mt-6"><button onclick="closeModal('predictions-modal')" class="px-4 py-2 rounded-lg border border-stone-300 text-stone-700 hover:bg-stone-100">Cancel</button><button id="submit-predictions" class="px-4 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700">Submit Predictions</button></div></div></div>
+    <div id="highlight-modal" class="modal-backdrop fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none"><div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-2xl p-6 transform scale-95"><h3 class="text-2xl font-bold mb-4 flex items-center"><span class="mr-3 text-2xl">✨</span> AI-Generated Highlight Reel</h3><div id="highlight-content" class="prose prose-stone max-w-none h-96 overflow-y-auto bg-stone-50 p-4 rounded-lg"><p>Generating your story...</p></div><div class="flex justify-end mt-4"><button onclick="closeModal('highlight-modal')" class="px-4 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700">Close</button></div></div></div>
+    <div id="error-modal" class="modal-backdrop fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none"><div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-sm p-6 text-center transform scale-95"><div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4"><svg class="h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" /></svg></div><h3 class="text-lg font-medium text-stone-900 mb-2">An Error Occurred</h3><p id="error-message" class="text-sm text-stone-600 mb-4"></p><button onclick="closeModal('error-modal')" class="w-full px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700">OK</button></div></div>
+    
+    <!-- JavaScript logic for the application -->
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, addDoc, collection, query, onSnapshot, serverTimestamp, getDocs, updateDoc, where, orderBy, limit } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
+
+        // --- GLOBAL VARIABLES ---
+        let app, auth, db, storage;
+        let currentUser = null;
+        let currentUnsubscribes = [];
+        let mediaRecorder;
+        let audioChunks = [];
+        let gameScores = {};
+
+        // --- CONFIGURATION ---
+        // IMPORTANT: Replace this with your actual Firebase config object.
+        const firebaseConfig = {
+            apiKey: "AIzaSyATMi-V4qppt-5u7mYFldqHQlJZslpwA1o-V4bYXogY",
+            authDomain: "williams-wedding-hub.firebaseapp.com",
+            projectId: "williams-wedding-hub",
+            storageBucket: "williams-wedding-hub.firebasestorage.app",
+            messagingSenderId: "554261439707",
+            appId: "1:554261439707:web:a9c9aee62db3cff7a6d8fe",
+            measurementId: "G-K6H5J1ZLNE"
+        };
+
+        // IMPORTANT: Replace this with your Gemini API key.
+        const geminiApiKey = "YOUR_GEMINI_API_KEY";
+
+        const appId = 'williams-wedding-2025';
+        const USER_STORAGE_KEY = `weddingHubUser_${appId}`;
+
+        // --- DOM ELEMENTS ---
+        const appContainer = document.getElementById('app-container');
+        const loginScreen = document.getElementById('login-screen');
+        const joinButton = document.getElementById('join-button');
+        const displayNameInput = document.getElementById('display-name-input');
+        const relationshipSelect = document.getElementById('relationship-select');
+
+        // --- INITIALIZATION ---
+        async function initialize() {
+            // Check if Firebase config is placeholder
+            if (!firebaseConfig.apiKey || firebaseConfig.apiKey === "YOUR_API_KEY") {
+                document.body.innerHTML = `<div class="p-8 text-center text-red-600 bg-red-100"><strong>Configuration Needed:</strong> Please add your Firebase configuration and Gemini API key to the script section of this HTML file.</div>`;
+                return;
+            }
+            
+            // Initialize Firebase services
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+            storage = getStorage(app);
+
+            // Handle authentication state changes
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    const userDocRef = doc(db, `artifacts/${appId}/public/data/users/${user.uid}`);
+                    const userDoc = await getDoc(userDocRef);
+                    if (userDoc.exists()) {
+                        currentUser = { uid: user.uid, ...userDoc.data() };
+                        localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(currentUser));
+                        showApp();
+                    } else {
+                        // If user exists in auth but not DB, show login
+                        loginScreen.classList.remove('hidden');
+                        appContainer.classList.add('hidden');
+                    }
+                } else {
+                    // No user logged in
+                    loginScreen.classList.remove('hidden');
+                    appContainer.classList.add('hidden');
+                }
+            });
+        }
+
+        // --- AUTHENTICATION ---
+        joinButton.addEventListener('click', async () => {
+            const displayName = displayNameInput.value.trim();
+            const relationship = relationshipSelect.value;
+            
+            if (!displayName || !relationship) {
+                showErrorModal("Please enter your name and relationship to the couple.");
+                return;
+            }
+            
+            try {
+                // Sign in anonymously to get a UID
+                const userCredential = await signInAnonymously(auth);
+                const user = userCredential.user;
+                
+                // Create user profile in Firestore
+                const userDocRef = doc(db, `artifacts/${appId}/public/data/users/${user.uid}`);
+                await setDoc(userDocRef, {
+                    displayName: displayName,
+                    relationship: relationship,
+                    createdAt: serverTimestamp(),
+                    points: 0
+                });
+                // The onAuthStateChanged listener will handle showing the app
+            } catch (error) {
+                console.error("Error joining event: ", error);
+                showErrorModal("Could not join the event. Please check your connection and try again.");
+            }
+        });
+
+        // --- UI & NAVIGATION ---
+        function showApp() {
+            loginScreen.classList.add('hidden');
+            appContainer.classList.remove('hidden');
+            document.getElementById('user-display-name').textContent = currentUser.displayName;
+            document.getElementById('user-id-display').textContent = currentUser.uid; // Display full ID
+            startCountdown();
+            showPage('home');
+            loadGuestList();
+        }
+
+        window.showPage = (pageId) => {
+            // Cleanup previous page listeners
+            currentUnsubscribes.forEach(unsub => unsub());
+            currentUnsubscribes = [];
+
+            // Switch active page
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(`page-${pageId}`).classList.add('active');
+            
+            // Switch active nav icon
+            document.querySelectorAll('.nav-icon').forEach(i => i.classList.remove('active'));
+            const navButton = document.querySelector(`.nav-icon[onclick="showPage('${pageId}')"]`);
+            if(navButton) navButton.classList.add('active');
+
+            // Show relevant floating action button
+            updateFab(pageId);
+            
+            // Load data for the new page
+            switch(pageId) {
+                case 'home': loadFeed(); break;
+                case 'schedule': loadSchedule(); break;
+                case 'photos': loadPhotos(); break;
+                case 'games': loadLeaderboard(); break;
+                case 'guestbook': loadGuestbook(); break;
+                case 'guide': loadGuide('all', document.querySelector('.guide-filter')); break;
+                case 'guests': renderGuestList(); break;
+            }
+        }
+
+        function updateFab(pageId) {
+            const fabContainer = document.getElementById('fab-container');
+            let fabHTML = '';
+            switch(pageId) {
+                case 'home':
+                    fabHTML = `<button onclick="openModal('post-modal')" class="bg-emerald-600 text-white rounded-full p-4 shadow-lg hover:bg-emerald-700 transition"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg></button>`;
+                    break;
+                case 'photos':
+                    fabHTML = `<button onclick="openModal('photo-modal')" class="bg-emerald-600 text-white rounded-full p-4 shadow-lg hover:bg-emerald-700 transition"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg></button>`;
+                    break;
+                case 'guestbook':
+                    fabHTML = `<div class="flex flex-col space-y-3">
+                        <button onclick="openGuestbookModal('text')" class="bg-emerald-600 text-white rounded-full p-4 shadow-lg hover:bg-emerald-700 transition"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
+                        <button onclick="openGuestbookModal('audio')" class="bg-emerald-600 text-white rounded-full p-4 shadow-lg hover:bg-emerald-700 transition"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg></button>
+                    </div>`;
+                    break;
+            }
+            fabContainer.innerHTML = fabHTML;
+        }
+
+        // --- MODAL MANAGEMENT ---
+        window.openModal = (modalId) => {
+            const modal = document.getElementById(modalId);
+            modal.classList.remove('pointer-events-none', 'opacity-0');
+            modal.querySelector('.modal-content').classList.remove('scale-95');
+            
+            // Specific modal setup
+            if(modalId === 'trivia-modal') startTrivia();
+            if(modalId === 'bingo-modal') startBingo();
+            if(modalId === 'scavenger-modal') startScavengerHunt();
+            if(modalId === 'predictions-modal') startPredictions();
+        }
+
+        window.closeModal = (modalId) => {
+            const modal = document.getElementById(modalId);
+            modal.classList.add('opacity-0');
+            modal.querySelector('.modal-content').classList.add('scale-95');
+            setTimeout(() => modal.classList.add('pointer-events-none'), 300);
+        }
+
+        window.showErrorModal = (message) => {
+            document.getElementById('error-message').textContent = message;
+            openModal('error-modal');
+        }
+
+        // --- COUNTDOWN TIMER ---
+        function startCountdown() {
+            const weddingDate = new Date('2025-07-27T16:00:00-04:00'); // 4 PM in Myrtle Beach (EDT)
+            const interval = setInterval(() => {
+                const now = new Date();
+                const diff = weddingDate - now;
+                if (diff <= 0) {
+                    clearInterval(interval);
+                    document.getElementById('countdown').innerHTML = '<p class="text-2xl font-bold text-emerald-700">The Big Day is Here! 🎉</p>';
+                    return;
+                }
+                document.getElementById('days').textContent = Math.floor(diff / (1000*60*60*24)).toString().padStart(2, '0');
+                document.getElementById('hours').textContent = Math.floor((diff % (1000*60*60*24)) / (1000*60*60)).toString().padStart(2, '0');
+                document.getElementById('minutes').textContent = Math.floor((diff % (1000*60*60)) / (1000*60)).toString().padStart(2, '0');
+                document.getElementById('seconds').textContent = Math.floor((diff % (1000*60)) / 1000).toString().padStart(2, '0');
+            }, 1000);
+        }
+
+        // --- GEMINI API HELPER ---
+        async function callGemini(prompt) {
+            if (!geminiApiKey || geminiApiKey === "YOUR_GEMINI_API_KEY") {
+                showErrorModal("Gemini API key is not configured.");
+                return null;
+            }
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiApiKey}`;
+            const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
+                const result = await response.json();
+                
+                if (result.candidates?.[0]?.content?.parts?.[0]?.text) {
+                    // **FIX for JSON parsing error**: Clean the response text
+                    let text = result.candidates[0].content.parts[0].text;
+                    return text.replace(/```json\s*|\s*```/g, '').trim();
+                } else {
+                    throw new Error("Invalid response structure from Gemini API.");
+                }
+            } catch (error) {
+                console.error("Gemini API call failed:", error);
+                showErrorModal(`AI feature failed: ${error.message}`);
+                return null;
+            }
+        }
+
+        // --- CORE FEATURES ---
+
+        // Social Feed
+        function loadFeed() {
+            const container = document.getElementById('feed-posts');
+            const q = query(collection(db, `artifacts/${appId}/public/data/feed`), orderBy('timestamp', 'desc'));
+            const unsubscribe = onSnapshot(q, (snapshot) => {
+                container.innerHTML = snapshot.empty 
+                    ? `<div class="text-center text-stone-500 py-10">No posts yet. Be the first to share!</div>`
+                    : snapshot.docs.map(doc => {
+                        const post = doc.data();
+                        return `<div class="bg-white p-4 rounded-lg shadow-sm border border-stone-200"><div class="flex items-center mb-2"><div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center font-bold text-emerald-700 mr-3">${post.authorName.charAt(0).toUpperCase()}</div><div><p class="font-bold text-stone-800">${post.authorName}</p><p class="text-xs text-stone-500">${post.timestamp?.toDate().toLocaleString() || 'Just now'}</p></div></div><p class="text-stone-700 whitespace-pre-wrap">${post.text}</p></div>`;
+                    }).join('');
+            });
+            currentUnsubscribes.push(unsubscribe);
+        }
+        document.getElementById('submit-post-button').addEventListener('click', async () => {
+            const input = document.getElementById('post-text-input');
+            if (!input.value.trim()) return;
+            await addDoc(collection(db, `artifacts/${appId}/public/data/feed`), {
+                authorId: currentUser.uid, authorName: currentUser.displayName, text: input.value.trim(), timestamp: serverTimestamp()
+            });
+            await updateUserPoints(5);
+            input.value = '';
+            closeModal('post-modal');
+        });
+        document.getElementById('suggest-post-button').addEventListener('click', async (e) => {
+            const btn = e.currentTarget;
+            btn.disabled = true; btn.innerHTML = `<span>✨</span> Thinking...`;
+            const suggestion = await callGemini("Suggest a fun, heartfelt, or humorous social media post for a wedding guest to share about Jaycee and Emily's wedding. Keep it short and genuine.");
+            if (suggestion) document.getElementById('post-text-input').value = suggestion.replace(/"/g, '');
+            btn.disabled = false; btn.innerHTML = `<span>✨</span> Suggest a Post`;
+        });
+
+        // Schedule
+        const scheduleData = [
+            { date: 'Friday, July 25, 2025', time: '6:00 PM', title: 'Welcome BBQ', description: 'Join us for a casual welcome BBQ!', category: 'reunion', location: 'Main Resort Pavilion' },
+            { date: 'Saturday, July 26, 2025', time: '10:00 AM', title: 'Beach Volleyball', description: 'Family reunion beach volleyball tournament!', category: 'reunion', location: 'Resort Beach' },
+            { date: 'Saturday, July 26, 2025', time: '5:00 PM', title: 'Rehearsal Dinner', description: 'For the wedding party and immediate family.', category: 'wedding', location: 'Carolina Seafood & Steak' },
+            { date: 'Sunday, July 27, 2025', time: '4:00 PM', title: 'Wedding Ceremony', description: 'The main event! Please be seated by 3:45 PM.', category: 'wedding', location: 'Oceanfront Gazebo' },
+            { date: 'Sunday, July 27, 2025', time: '6:00 PM', title: 'Reception', description: 'Dinner, drinks, and dancing!', category: 'wedding', location: 'Grand Ballroom' },
+            { date: 'Monday, July 28, 2025', time: '10:00 AM', title: 'Farewell Brunch', description: 'One last gathering before we go.', category: 'reunion', location: 'Resort Cafe' },
+        ];
+        function loadSchedule() { filterSchedule('all', document.querySelector('.schedule-tab')); }
+        window.filterSchedule = (filter, btn) => {
+            const container = document.getElementById('schedule-list');
+            const filtered = filter === 'all' ? scheduleData : scheduleData.filter(item => item.category === filter);
+            document.querySelectorAll('.schedule-tab').forEach(b => b.classList.replace('bg-emerald-600', 'bg-stone-200') || b.classList.replace('text-white', 'text-stone-700'));
+            btn.classList.replace('bg-stone-200', 'bg-emerald-600');
+            btn.classList.replace('text-stone-700', 'text-white');
+            container.innerHTML = filtered.map(item => `<div class="bg-white p-4 rounded-lg shadow-sm border"><div class="flex justify-between items-start"><div><p class="text-sm font-semibold text-emerald-700">${item.date}</p><h3 class="text-xl font-bold mt-1">${item.title}</h3><p class="text-stone-600 mt-1">${item.time} @ ${item.location}</p><p class="text-stone-600 mt-2">${item.description}</p></div><button onclick="getDirections('${item.location}')" class="ml-4 p-2 bg-emerald-100 text-emerald-700 rounded-lg hover:bg-emerald-200"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg></button></div></div>`).join('');
+        }
+        window.getDirections = (loc) => window.open(`https://maps.google.com/maps?q=${encodeURIComponent(loc + ', Myrtle Beach, SC')}`, '_blank');
+
+        // Photo Gallery
+        function loadPhotos() {
+            const container = document.getElementById('photo-grid');
+            const q = query(collection(db, `artifacts/${appId}/public/data/photos`), orderBy('timestamp', 'desc'));
+            const unsubscribe = onSnapshot(q, (snapshot) => {
+                container.innerHTML = snapshot.empty
+                    ? `<div class="col-span-full text-center text-stone-500 py-10">No photos yet. Be the first to share!</div>`
+                    : snapshot.docs.map(doc => {
+                        const photo = doc.data();
+                        return `<div class="bg-white rounded-lg shadow-sm border overflow-hidden group"><img src="${photo.imageUrl}" onerror="this.onerror=null;this.src='https://placehold.co/400x400/fefbf6/44403c?text=Error';" alt="${photo.caption}" class="w-full h-40 object-cover group-hover:scale-105 transition-transform"><div class="p-3"><p class="text-sm truncate">${photo.caption || 'Untitled'}</p><p class="text-xs text-stone-500">By: ${photo.uploaderName}</p></div></div>`;
+                    }).join('');
+            });
+            currentUnsubscribes.push(unsubscribe);
+        }
+        document.getElementById('photo-file-input').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                document.getElementById('file-chosen-text').textContent = file.name;
+                document.getElementById('submit-photo-button').disabled = false;
+            }
+        });
+        document.getElementById('submit-photo-button').addEventListener('click', () => {
+            const file = document.getElementById('photo-file-input').files[0];
+            if (!file) return;
+
+            const caption = document.getElementById('photo-caption-input').value.trim();
+            const btn = document.getElementById('submit-photo-button');
+            const progressContainer = document.getElementById('upload-progress-container');
+            const progressBar = document.getElementById('upload-progress-bar');
+            
+            btn.disabled = true;
+            btn.textContent = 'Uploading...';
+            progressContainer.classList.remove('hidden');
+
+            const storageRef = ref(storage, `${appId}/photos/${currentUser.uid}/${Date.now()}-${file.name}`);
+            const uploadTask = uploadBytesResumable(storageRef, file);
+
+            uploadTask.on('state_changed', 
+                (snapshot) => progressBar.style.width = (snapshot.bytesTransferred / snapshot.totalBytes) * 100 + '%',
+                (error) => {
+                    console.error("Upload failed:", error);
+                    showErrorModal(`Photo upload failed. Please check your permissions and try again. Error: ${error.code}`);
+                    btn.disabled = false;
+                    btn.textContent = 'Upload Photo';
+                    progressContainer.classList.add('hidden');
+                }, 
+                async () => {
+                    const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                    await addDoc(collection(db, `artifacts/${appId}/public/data/photos`), {
+                        uploaderId: currentUser.uid, uploaderName: currentUser.displayName, imageUrl: downloadURL, caption: caption, timestamp: serverTimestamp()
+                    });
+                    await updateUserPoints(10);
+                    closeModal('photo-modal');
+                    // Reset modal state
+                    document.getElementById('photo-file-input').value = '';
+                    document.getElementById('photo-caption-input').value = '';
+                    document.getElementById('file-chosen-text').textContent = 'Choose a photo...';
+                    btn.disabled = true;
+                    btn.textContent = 'Upload Photo';
+                    progressContainer.classList.add('hidden');
+                }
+            );
+        });
+
+        // AI Highlight Reel
+        document.getElementById('generate-highlight-button').addEventListener('click', async (e) => {
+            const btn = e.currentTarget;
+            btn.disabled = true;
+            openModal('highlight-modal');
+            const contentDiv = document.getElementById('highlight-content');
+            contentDiv.innerHTML = '<p>Gathering memories and creating your personalized highlight reel...</p>';
+            
+            const [photosSnap, feedSnap, guestbookSnap] = await Promise.all([
+                getDocs(query(collection(db, `artifacts/${appId}/public/data/photos`), limit(15))),
+                getDocs(query(collection(db, `artifacts/${appId}/public/data/feed`), limit(15))),
+                getDocs(query(collection(db, `artifacts/${appId}/public/data/guestbook`), limit(15)))
+            ]);
+
+            let memories = [
+                ...photosSnap.docs.map(d => `Photo: "${d.data().caption}" by ${d.data().uploaderName}`),
+                ...feedSnap.docs.map(d => `Post: "${d.data().text}" by ${d.data().authorName}`),
+                ...guestbookSnap.docs.filter(d => d.data().type === 'text').map(d => `Guestbook: "${d.data().message}" from ${d.data().authorName}`)
+            ];
+
+            if (memories.length < 3) {
+                contentDiv.innerHTML = "<p>Not enough memories yet! Keep sharing photos, posts, and messages to generate a beautiful highlight reel.</p>";
+                btn.disabled = false;
+                return;
+            }
+
+            const prompt = `You are a warm, creative storyteller for a wedding. Based on these memories from Jaycee and Emily's wedding celebration, write a beautiful, emotional narrative that captures the joy and love of the event. Include specific details from the memories. Format it with a touching title and short, meaningful paragraphs. Memories:\n\n${memories.join('\n')}`;
+            const story = await callGemini(prompt);
+            contentDiv.innerHTML = story ? story.split('\n').map(line => line.startsWith('#') ? `<h3>${line.replace(/#/g, '')}</h3>` : `<p>${line}</p>`).join('') : "<p>Could not generate the story. Please try again.</p>";
+            btn.disabled = false;
+        });
+
+        // Guestbook
+        function loadGuestbook() {
+            const container = document.getElementById('guestbook-messages');
+            const q = query(collection(db, `artifacts/${appId}/public/data/guestbook`), orderBy('timestamp', 'desc'));
+            const unsubscribe = onSnapshot(q, (snapshot) => {
+                container.innerHTML = snapshot.empty
+                    ? `<div class="text-center text-stone-500 py-10">No messages yet. Be the first to leave one!</div>`
+                    : snapshot.docs.map(doc => {
+                        const msg = doc.data();
+                        const time = msg.timestamp?.toDate().toLocaleString() || 'Just now';
+                        if (msg.type === 'text') {
+                            return `<div class="bg-white p-4 rounded-lg shadow-sm border"><p class="font-bold mb-2">${msg.authorName}</p><p class="italic">"${msg.message}"</p><p class="text-xs text-stone-500 text-right mt-2">${time}</p></div>`;
+                        } else if (msg.type === 'audio') {
+                            return `<div class="bg-white p-4 rounded-lg shadow-sm border"><p class="font-bold mb-2">Audio message from ${msg.authorName}</p><audio controls class="w-full mt-2" src="${msg.audioUrl}"></audio><p class="text-xs text-stone-500 text-right mt-2">${time}</p></div>`;
+                        }
+                        return '';
+                    }).join('');
+            });
+            currentUnsubscribes.push(unsubscribe);
+        }
+        window.openGuestbookModal = (type) => {
+            document.querySelectorAll('.message-form').forEach(f => f.classList.add('hidden'));
+            document.getElementById(`${type}-message-form`).classList.remove('hidden');
+            openModal('guestbook-input-modal');
+        }
+        document.getElementById('submit-text-message').addEventListener('click', async () => {
+            const input = document.getElementById('guestbook-text-input');
+            if (!input.value.trim()) return;
+            await addDoc(collection(db, `artifacts/${appId}/public/data/guestbook`), {
+                authorId: currentUser.uid, authorName: currentUser.displayName, message: input.value.trim(), type: 'text', timestamp: serverTimestamp()
+            });
+            await updateUserPoints(15);
+            input.value = '';
+            closeModal('guestbook-input-modal');
+        });
+        document.getElementById('suggest-message-button').addEventListener('click', async (e) => {
+            const btn = e.currentTarget;
+            btn.disabled = true; btn.innerHTML = `<span>✨</span> Thinking...`;
+            const suggestion = await callGemini("Write a heartfelt, warm, or funny guestbook message for Jaycee and Emily's wedding. Keep it personal and genuine.");
+            if (suggestion) document.getElementById('guestbook-text-input').value = suggestion.replace(/"/g, '');
+            btn.disabled = false; btn.innerHTML = `<span>✨</span> Suggest Message`;
+        });
+        // Audio Recording Logic
+        const recordButton = document.getElementById('record-audio-button');
+        const recordStatus = document.getElementById('record-status');
+        const startRecording = async () => {
+            if (!navigator.mediaDevices) return showErrorModal("Audio recording not supported.");
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
+            audioChunks = [];
+            mediaRecorder.addEventListener("dataavailable", e => audioChunks.push(e.data));
+            mediaRecorder.start();
+            recordStatus.textContent = "Recording... Release to stop";
+            recordButton.classList.add('animate-pulse');
+        };
+        const stopRecording = () => {
+            if (!mediaRecorder) return;
+            mediaRecorder.stream.getTracks().forEach(track => track.stop());
+            mediaRecorder.stop();
+            recordStatus.textContent = "Processing...";
+            recordButton.classList.remove('animate-pulse');
+            mediaRecorder.addEventListener("stop", async () => {
+                const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                const storageRef = ref(storage, `${appId}/audio/${currentUser.uid}/${Date.now()}.webm`);
+                const uploadTask = uploadBytesResumable(storageRef, audioBlob);
+                recordStatus.textContent = "Uploading...";
+                uploadTask.on('state_changed', null, 
+                    (err) => showErrorModal(`Audio upload failed: ${err.code}`),
+                    async () => {
+                        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                        await addDoc(collection(db, `artifacts/${appId}/public/data/guestbook`), {
+                            authorId: currentUser.uid, authorName: currentUser.displayName, audioUrl: downloadURL, type: 'audio', timestamp: serverTimestamp()
+                        });
+                        await updateUserPoints(20);
+                        recordStatus.textContent = "Saved!";
+                        setTimeout(() => closeModal('guestbook-input-modal'), 1000);
+                    }
+                );
+            });
+        };
+        recordButton.addEventListener('mousedown', startRecording);
+        recordButton.addEventListener('mouseup', stopRecording);
+        recordButton.addEventListener('touchstart', startRecording, { passive: true });
+        recordButton.addEventListener('touchend', stopRecording);
+
+        // --- GAMES ---
+        
+        // Trivia
+        let triviaQuestions = [];
+        let currentQuestion = 0;
+        let triviaScore = 0;
+        window.startTrivia = async function() {
+            currentQuestion = 0;
+            triviaScore = 0;
+            const container = document.getElementById('trivia-content');
+            container.innerHTML = `<p class="text-center">Loading new questions...</p>`;
+            await generateNewTrivia(true); // Force generate new questions on start
+        }
+        async function generateNewTrivia(isFirstTime = false) {
+            const container = document.getElementById('trivia-content');
+            const prompt = `Generate exactly 5 new, fun trivia questions about a fictional wedding couple named Jaycee and Emily getting married in Myrtle Beach. Return ONLY a valid JSON array with this exact structure: [{"q": "question text", "a": ["answer1", "answer2", "answer3", "answer4"], "correct": 0}]. The correct field should be a 0-3 index. Do not include any other text or markdown formatting.`;
+            const responseText = await callGemini(prompt);
+            if (responseText) {
+                try {
+                    const newQuestions = JSON.parse(responseText);
+                    if (Array.isArray(newQuestions) && newQuestions.length > 0) {
+                        triviaQuestions = newQuestions;
+                        if (isFirstTime) {
+                           renderTriviaQuestion();
+                        } else {
+                           // If regenerating mid-game, just replace the question list
+                           showErrorModal("New questions have been loaded!");
+                        }
+                    } else {
+                         throw new Error("Parsed JSON is not a valid question array.");
+                    }
+                } catch (err) {
+                    console.error("Failed to parse trivia JSON:", err, "Response was:", responseText);
+                    showErrorModal("Could not generate new questions. Using defaults.");
+                    triviaQuestions = [ { q: "Where did Jaycee propose?", a: ["The beach", "A restaurant", "At home", "On a hike"], correct: 0 }, { q: "What's their dog's name?", a: ["Max", "Bella", "Cooper", "They don't have one"], correct: 3 }];
+                    if(isFirstTime) renderTriviaQuestion();
+                }
+            }
+        }
+        function renderTriviaQuestion() {
+            const container = document.getElementById('trivia-content');
+            if (currentQuestion >= triviaQuestions.length) {
+                container.innerHTML = `<h3 class="text-2xl font-bold mb-4 text-center">Trivia Complete!</h3><p class="text-center text-xl mb-6">You scored ${triviaScore} out of ${triviaQuestions.length}!</p><p class="text-center text-emerald-600 mb-6">+${triviaScore * 10} points earned!</p><div class="flex justify-center space-x-4"><button onclick="closeModal('trivia-modal')" class="bg-stone-500 text-white font-bold py-2 px-4 rounded-lg">Close</button><button onclick="startTrivia()" class="bg-emerald-600 text-white font-bold py-2 px-4 rounded-lg">Play Again</button></div>`;
+                updateUserPoints(triviaScore * 10);
+                return;
+            }
+            const q = triviaQuestions[currentQuestion];
+            container.innerHTML = `<div class="flex justify-between items-start mb-4"><div><h3 class="text-2xl font-bold">Family Face-Off!</h3><p class="text-sm text-stone-500">Question ${currentQuestion + 1} of ${triviaQuestions.length}</p></div><button onclick="generateNewTrivia(false)" class="gemini-button font-semibold py-1 px-2 rounded-lg text-xs flex items-center"><span class="mr-1">✨</span> New Questions</button></div><p class="text-lg text-stone-700 mb-6">${q.q}</p><div class="grid grid-cols-1 md:grid-cols-2 gap-3">${q.a.map((opt, i) => `<button class="p-4 border-2 border-stone-300 rounded-lg hover:bg-emerald-50 hover:border-emerald-500 text-left" onclick="checkAnswer(${i}, ${q.correct})">${opt}</button>`).join('')}</div>`;
+        }
+        window.checkAnswer = (selected, correct) => {
+            if (selected === correct) triviaScore++;
+            currentQuestion++;
+            renderTriviaQuestion();
+        }
+
+        // --- UTILITIES ---
+        async function updateUserPoints(points) {
+            if (!currentUser) return;
+            const userRef = doc(db, `artifacts/${appId}/public/data/users/${currentUser.uid}`);
+            const userDoc = await getDoc(userRef);
+            const currentPoints = userDoc.data()?.points || 0;
+            await updateDoc(userRef, { points: currentPoints + points });
+            currentUser.points = currentPoints + points;
+        }
+
+        async function loadLeaderboard() {
+            const container = document.getElementById('leaderboard');
+            const q = query(collection(db, `artifacts/${appId}/public/data/users`), orderBy('points', 'desc'), limit(10));
+            const snapshot = await getDocs(q);
+            container.innerHTML = snapshot.empty ? '<p>No scores yet!</p>' : snapshot.docs.map((doc, i) => {
+                const user = doc.data();
+                const rank = i + 1;
+                const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : `#${rank}`;
+                return `<div class="flex items-center justify-between p-3 bg-stone-50 rounded-lg ${doc.id === currentUser.uid ? 'border-2 border-emerald-500' : ''}"><div class="flex items-center"><span class="text-lg font-bold mr-3">${medal}</span><span>${user.displayName}</span></div><span class="font-bold text-emerald-700">${user.points || 0} pts</span></div>`;
+            }).join('');
+        }
+
+        let allGuests = [];
+        async function loadGuestList() {
+            const snapshot = await getDocs(collection(db, `artifacts/${appId}/public/data/users`));
+            allGuests = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })).sort((a, b) => a.displayName.localeCompare(b.displayName));
+        }
+        function renderGuestList(searchTerm = '') {
+            const container = document.getElementById('guest-list');
+            const filtered = searchTerm ? allGuests.filter(g => g.displayName.toLowerCase().includes(searchTerm.toLowerCase())) : allGuests;
+            container.innerHTML = filtered.map(guest => `<div class="bg-white p-4 rounded-lg shadow-sm border"><div class="flex items-center"><div class="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center font-bold text-emerald-700 text-lg mr-3">${guest.displayName.charAt(0).toUpperCase()}</div><div><p class="font-bold">${guest.displayName}</p><p class="text-sm text-stone-600">${guest.relationship}</p></div></div></div>`).join('');
+        }
+        document.getElementById('guest-search').addEventListener('input', (e) => renderGuestList(e.target.value));
+
+        // --- Make functions globally available for onclick handlers ---
+        window.filterSchedule = filterSchedule;
+        window.getDirections = getDirections;
+        window.checkAnswer = checkAnswer;
+        window.generateNewTrivia = generateNewTrivia;
+        window.startTrivia = startTrivia;
+        // Add other game functions here if they need to be global
+        
+        // Initialize the app on script load
+        initialize();
+    </script>
+</body>
+</html>
