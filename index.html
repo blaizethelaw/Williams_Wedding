@@ -291,7 +291,7 @@
         };
 
         // IMPORTANT: Replace this with your Gemini API key.
-        const geminiApiKey = "YOUR_GEMINI_API_KEY";
+        const geminiApiKey = "AIzaSyATMi-V4qppt-5u7mYFldqHQlJZslpwA1o-V4bYXogY";
 
         const appId = 'williams-wedding-2025';
         const USER_STORAGE_KEY = `weddingHubUser_${appId}`;
@@ -306,7 +306,7 @@
         // --- INITIALIZATION ---
         async function initialize() {
             // Check if Firebase config is placeholder
-            if (!firebaseConfig.apiKey || firebaseConfig.apiKey === "YOUR_API_KEY") {
+            if (!firebaseConfig.apiKey || firebaseConfig.apiKey === "AIzaSyATMi-V4qppt-5u7mYFldqHQlJZslpwA1o-V4bYXogY") {
                 document.body.innerHTML = `<div class="p-8 text-center text-red-600 bg-red-100"><strong>Configuration Needed:</strong> Please add your Firebase configuration and Gemini API key to the script section of this HTML file.</div>`;
                 return;
             }
@@ -474,7 +474,7 @@
 
         // --- GEMINI API HELPER ---
         async function callGemini(prompt) {
-            if (!geminiApiKey || geminiApiKey === "YOUR_GEMINI_API_KEY") {
+            if (!geminiApiKey || geminiApiKey === "AIzaSyATMi-V4qppt-5u7mYFldqHQlJZslpwA1o-V4bYXogY") {
                 showErrorModal("Gemini API key is not configured.");
                 return null;
             }
