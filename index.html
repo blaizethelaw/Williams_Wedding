@@ -274,9 +274,9 @@
         let gameScores = {};
 
         // --- CONFIGURATION ---
-        // ✅ **FIX 1**: The "Browser key (auto created by Firebase)" goes here.
+        // ✅ **FIX 1**: Pasted your Browser Key here.
         const firebaseConfig = {
-          apiKey: "AIzaSyD7OuSo08oqNAoMizzlIKKyJG-V4bYXogY", // <--- PASTE BROWSER KEY HERE
+          apiKey: "AIzaSyD7OuSo08oqNAoMizzlIKKyJG-V4bYXogY",
           authDomain: "williams-wedding-hub.firebaseapp.com",
           projectId: "williams-wedding-hub",
           storageBucket: "williams-wedding-hub.appspot.com",
@@ -284,8 +284,8 @@
           appId: "1:554261439707:web:a9c9aee62db3cff7a6d8fe",
           measurementId: "G-K6H5J1ZLNE"
         };
-        // ✅ **FIX 2**: The "Generative Language API Key" goes here.
-        const geminiApiKey = "AIzaSyCLgm2kLUSZ-0itnDbY_nT-qBDc7f6FZsQ"; // <--- PASTE GEMINI KEY HERE
+        // ✅ **FIX 2**: Pasted your Generative Language Key here.
+        const geminiApiKey = "AIzaSyCLgm2kLUSZ-0itnDbY_nT-qBDc7f6FZsQ";
 
         const appId = 'williams-wedding-2025';
         const USER_STORAGE_KEY = `weddingHubUser_${appId}`;
@@ -473,7 +473,7 @@
                 return null;
             }
             // ✅ **FIX 3**: This now correctly uses the `geminiApiKey` variable from above.
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${AIzaSyCLgm2kLUSZ-0itnDbY_nT-qBDc7f6FZsQ}`;
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${geminiApiKey}`;
             const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
 
             try {
