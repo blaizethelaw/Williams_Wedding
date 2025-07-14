@@ -276,7 +276,7 @@
         // --- CONFIGURATION ---
         // ✅ **FIX 1**: The "Browser key (auto created by Firebase)" goes here.
         const firebaseConfig = {
-          apiKey: "YOUR_BROWSER_KEY_FROM_FIREBASE", // <--- PASTE BROWSER KEY HERE
+          apiKey: "AIzaSyD7OuSo08oqNAoMizzlIKKyJG-V4bYXogY", // <--- PASTE BROWSER KEY HERE
           authDomain: "williams-wedding-hub.firebaseapp.com",
           projectId: "williams-wedding-hub",
           storageBucket: "williams-wedding-hub.appspot.com",
@@ -285,7 +285,7 @@
           measurementId: "G-K6H5J1ZLNE"
         };
         // ✅ **FIX 2**: The "Generative Language API Key" goes here.
-        const geminiApiKey = "YOUR_GENERATIVE_LANGUAGE_API_KEY"; // <--- PASTE GEMINI KEY HERE
+        const geminiApiKey = "AIzaSyCLgm2kLUSZ-0itnDbY_nT-qBDc7f6FZsQ"; // <--- PASTE GEMINI KEY HERE
 
         const appId = 'williams-wedding-2025';
         const USER_STORAGE_KEY = `weddingHubUser_${appId}`;
@@ -300,7 +300,7 @@
         // --- INITIALIZATION ---
         async function initialize() {
             // Check if Firebase config is placeholder
-            if (!firebaseConfig.apiKey || firebaseConfig.apiKey.startsWith("YOUR_")) {
+            if (!firebaseConfig.apiKey || firebaseConfig.apiKey.startsWith("AIzaSyD7OuSo08oqNAoMizzlIKKyJG-V4bYXogY")) {
                 document.body.innerHTML = `<div class="p-8 text-center text-red-600 bg-red-100"><strong>Configuration Needed:</strong> Please add your Firebase configuration and Gemini API key to the script section of this HTML file.</div>`;
                 return;
             }
@@ -468,12 +468,12 @@
 
         // --- GEMINI API HELPER ---
         async function callGemini(prompt) {
-            if (!geminiApiKey || geminiApiKey.startsWith("YOUR_")) {
+            if (!geminiApiKey || geminiApiKey.startsWith("AIzaSyCLgm2kLUSZ-0itnDbY_nT-qBDc7f6FZsQ")) {
                 showErrorModal("Gemini API key is not configured.");
                 return null;
             }
             // ✅ **FIX 3**: This now correctly uses the `geminiApiKey` variable from above.
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${geminiApiKey}`;
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${AIzaSyCLgm2kLUSZ-0itnDbY_nT-qBDc7f6FZsQ}`;
             const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
 
             try {
