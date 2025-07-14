@@ -13,7 +13,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
-    <!-- Styles for the application -->
     <style>
         body {
             font-family: 'Roboto', sans-serif;
@@ -124,7 +123,6 @@
 </head>
 <body class="bg-[#FEFBF6] text-stone-800 dark:bg-stone-900 dark:text-stone-200 antialiased">
 
-    <!-- Main Application Container -->
     <div id="app-container" class="hidden">
         <header class="bg-white/80 dark:bg-stone-800/80 backdrop-blur-sm sticky top-0 z-20 shadow-sm border-b border-stone-200 dark:border-stone-700">
             <div class="container mx-auto px-4 py-3 flex justify-between items-center">
@@ -132,7 +130,6 @@
                 <div class="flex items-center space-x-4">
                     <div id="user-info" class="text-right text-xs text-stone-500 dark:text-stone-400">
                         <p id="user-display-name" class="font-semibold text-stone-700 dark:text-stone-300"></p>
-                        <!-- User ID is displayed for collaborative purposes -->
                         <p>ID: <span id="user-id-display"></span></p>
                     </div>
                     <button id="dark-mode-toggle" class="text-xl text-stone-600 dark:text-stone-300 hover:text-emerald-700" aria-label="Toggle dark mode">🌙</button>
@@ -141,9 +138,7 @@
         </header>
 
         <main id="main-content" class="container mx-auto px-4 py-6 pb-32">
-            <!-- Page: Home/Feed -->
             <div id="page-home" class="page">
-                <!-- Countdown Timer -->
                 <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
                     <h2 class="text-2xl font-bold text-center mb-4">Countdown to the Big Day!</h2>
                     <div id="countdown" class="flex justify-center gap-3 mb-4">
@@ -156,12 +151,10 @@
                     <p class="text-center text-sm text-stone-600 mt-2">Love meter: Maximum! 💕</p>
                 </div>
 
-                <!-- Social Feed -->
                 <h3 class="text-xl font-bold mb-4">Event Feed</h3>
                 <div id="feed-posts" class="space-y-4"></div>
             </div>
 
-            <!-- Page: Schedule -->
             <div id="page-schedule" class="page">
                 <h2 class="text-3xl font-bold text-center mb-6 text-stone-900">Event Schedule</h2>
                 <div id="schedule-tabs" class="flex justify-center mb-6 space-x-2">
@@ -172,7 +165,6 @@
                 <div id="schedule-list" class="space-y-4"></div>
             </div>
             
-            <!-- Page: Games -->
             <div id="page-games" class="page">
                 <h2 class="text-3xl font-bold text-center mb-6 text-stone-900">Games & Activities</h2>
                 <div class="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
@@ -182,14 +174,12 @@
                     <div class="game-card" onclick="openModal('predictions-modal')"><h3 class="text-2xl font-bold text-emerald-700 mb-2">Love Predictions</h3><p class="text-stone-600">Make fun predictions about the couple's future!</p></div>
                 </div>
                 
-                <!-- Live Leaderboard -->
                 <div class="mt-8 bg-white rounded-lg shadow-sm p-6">
                     <h3 class="text-xl font-bold mb-4">Game Leaderboard</h3>
                     <div id="leaderboard" class="space-y-2"></div>
                 </div>
             </div>
 
-            <!-- Page: Photos -->
             <div id="page-photos" class="page">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-3xl font-bold text-stone-900">Photo Gallery</h2>
@@ -200,14 +190,12 @@
                 <div id="photo-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
             </div>
             
-            <!-- Page: Guestbook -->
             <div id="page-guestbook" class="page">
                 <h2 class="text-3xl font-bold text-center mb-6 text-stone-900">Digital Guestbook</h2>
                 <p class="text-center text-stone-600 mb-8 max-w-2xl mx-auto">Leave a heartfelt message for Jaycee & Emily!</p>
                 <div id="guestbook-messages" class="space-y-4"></div>
             </div>
 
-            <!-- Page: Local Guide -->
             <div id="page-guide" class="page">
                 <h2 class="text-3xl font-bold text-center mb-4 text-stone-900">Myrtle Beach Guide</h2>
                 <p class="text-center text-stone-600 mb-6">Jaycee & Emily's favorite spots and recommendations!</p>
@@ -221,7 +209,6 @@
                 <div id="guide-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
             </div>
 
-            <!-- Page: Guests -->
             <div id="page-guests" class="page">
                 <h2 class="text-3xl font-bold text-center mb-6 text-stone-900">Guest Directory</h2>
                 <div class="mb-6"><input type="text" id="guest-search" placeholder="Search guests..." class="w-full px-4 py-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none"></div>
@@ -229,10 +216,8 @@
             </div>
         </main>
 
-        <!-- Floating Action Buttons -->
         <div id="fab-container" class="fixed bottom-28 right-5 z-20"></div>
 
-        <!-- Bottom Navigation -->
         <nav class="fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-stone-800/80 backdrop-blur-sm border-t border-stone-200 dark:border-stone-700 shadow-t-sm z-30">
             <div class="container mx-auto grid grid-cols-4 text-center py-2">
                 <button onclick="showPage('home')" class="nav-icon active flex flex-col items-center text-stone-600 dark:text-stone-400 hover:text-emerald-700 dark:hover:text-emerald-500 transition"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg><span class="text-xs mt-1">Home</span></button>
@@ -247,7 +232,6 @@
         </nav>
     </div>
 
-    <!-- Login/Welcome Screen -->
     <div id="login-screen" class="min-h-screen flex items-center justify-center p-4">
         <div class="max-w-md w-full text-center bg-white p-8 rounded-2xl shadow-lg">
             <h1 class="text-4xl font-bold text-stone-800 mb-2">Welcome to</h1>
@@ -264,7 +248,6 @@
         </div>
     </div>
     
-    <!-- Modals -->
     <div id="post-modal" class="modal-backdrop fixed inset-0 bg-black bg-opacity-50 z-40 flex items-center justify-center p-4 opacity-0 pointer-events-none"><div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-md p-6 transform scale-95"><h3 class="text-2xl font-bold mb-4">Share a Moment</h3><textarea id="post-text-input" placeholder="Share a memory, well-wish, or update..." class="w-full h-24 p-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none"></textarea><div class="flex justify-between items-center mt-4"><button id="suggest-post-button" class="gemini-button font-semibold py-2 px-3 rounded-lg text-sm flex items-center"><span class="mr-2">✨</span> Suggest a Post</button><div class="flex space-x-3"><button onclick="closeModal('post-modal')" class="px-4 py-2 rounded-lg border border-stone-300 text-stone-700 hover:bg-stone-100">Cancel</button><button id="submit-post-button" class="px-4 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700">Post</button></div></div></div></div>
     <div id="photo-modal" class="modal-backdrop fixed inset-0 bg-black bg-opacity-50 z-40 flex items-center justify-center p-4 opacity-0 pointer-events-none"><div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-md p-6 transform scale-95"><h3 class="text-2xl font-bold mb-4">Add a Photo</h3><div class="space-y-4"><input type="file" id="photo-file-input" class="hidden" accept="image/*"><label for="photo-file-input" class="file-input-button text-center"><span id="file-chosen-text">Choose a photo...</span></label><textarea id="photo-caption-input" placeholder="Add a caption..." class="w-full h-20 p-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none"></textarea></div><div id="upload-progress-container" class="w-full bg-gray-200 rounded-full h-2.5 mt-4 hidden"><div id="upload-progress-bar" class="bg-emerald-600 h-2.5 rounded-full" style="width: 0%"></div></div><div class="flex justify-end space-x-3 mt-4"><button onclick="closeModal('photo-modal')" class="px-4 py-2 rounded-lg border border-stone-300 text-stone-700 hover:bg-stone-100">Cancel</button><button id="submit-photo-button" class="px-4 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 disabled:bg-emerald-300" disabled>Upload Photo</button></div></div></div>
     <div id="guestbook-input-modal" class="modal-backdrop fixed inset-0 bg-black bg-opacity-50 z-40 flex items-center justify-center p-4 opacity-0 pointer-events-none"><div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-md p-6 transform scale-95"><h3 class="text-2xl font-bold mb-4">Leave a Message</h3><div id="text-message-form" class="message-form"><textarea id="guestbook-text-input" placeholder="Write your message for Jaycee & Emily..." class="w-full h-32 p-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none mb-4"></textarea><div class="flex justify-between items-center"><button id="suggest-message-button" class="gemini-button font-semibold py-2 px-3 rounded-lg text-sm flex items-center"><span class="mr-2">✨</span> Suggest Message</button><div class="flex space-x-3"><button onclick="closeModal('guestbook-input-modal')" class="px-4 py-2 rounded-lg border border-stone-300 text-stone-700 hover:bg-stone-100">Cancel</button><button id="submit-text-message" class="px-4 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700">Submit</button></div></div></div><div id="audio-message-form" class="message-form hidden"><p class="text-stone-600 mb-4">Press and hold the button to record an audio message.</p><div class="text-center"><button id="record-audio-button" class="bg-red-500 text-white rounded-full p-6 shadow-lg hover:bg-red-600 transition duration-300"><svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg></button><p id="record-status" class="text-sm text-stone-500 mt-3 h-5"></p></div><div class="flex justify-end space-x-3 mt-4"><button onclick="closeModal('guestbook-input-modal')" class="px-4 py-2 rounded-lg border border-stone-300 text-stone-700 hover:bg-stone-100">Cancel</button></div></div></div></div>
@@ -275,7 +258,6 @@
     <div id="highlight-modal" class="modal-backdrop fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none"><div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-2xl p-6 transform scale-95"><h3 class="text-2xl font-bold mb-4 flex items-center"><span class="mr-3 text-2xl">✨</span> AI-Generated Highlight Reel</h3><div id="highlight-content" class="prose prose-stone max-w-none h-96 overflow-y-auto bg-stone-50 p-4 rounded-lg"><p>Generating your story...</p></div><div class="flex justify-end mt-4"><button onclick="closeModal('highlight-modal')" class="px-4 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700">Close</button></div></div></div>
     <div id="error-modal" class="modal-backdrop fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none"><div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-sm p-6 text-center transform scale-95"><div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4"><svg class="h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" /></svg></div><h3 class="text-lg font-medium text-stone-900 mb-2">An Error Occurred</h3><p id="error-message" class="text-sm text-stone-600 mb-4"></p><button onclick="closeModal('error-modal')" class="w-full px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700">OK</button></div></div>
     
-    <!-- JavaScript logic for the application -->
     <script type="module">
         // Import Firebase modules
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -292,19 +274,18 @@
         let gameScores = {};
 
         // --- CONFIGURATION ---
-        // IMPORTANT: Replace this with your actual Firebase config object.
-        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyD7OuSo08oqNAoMizzlIKKyJG-V4bYXogY",
-  authDomain: "williams-wedding-hub.firebaseapp.com",
-  projectId: "williams-wedding-hub",
-  storageBucket: "williams-wedding-hub.firebasestorage.app",
-  messagingSenderId: "554261439707",
-  appId: "1:554261439707:web:a9c9aee62db3cff7a6d8fe",
-  measurementId: "G-K6H5J1ZLNE"
-};
-        // IMPORTANT: Replace this with your Gemini API key.
-        const geminiApiKey = "AIzaSyCLgm2kLUSZ-0itnDbY_nT-qBDc7f6FZsQ";
+        // ✅ **FIX 1**: The "Browser key (auto created by Firebase)" goes here.
+        const firebaseConfig = {
+          apiKey: "YOUR_BROWSER_KEY_FROM_FIREBASE", // <--- PASTE BROWSER KEY HERE
+          authDomain: "williams-wedding-hub.firebaseapp.com",
+          projectId: "williams-wedding-hub",
+          storageBucket: "williams-wedding-hub.appspot.com",
+          messagingSenderId: "554261439707",
+          appId: "1:554261439707:web:a9c9aee62db3cff7a6d8fe",
+          measurementId: "G-K6H5J1ZLNE"
+        };
+        // ✅ **FIX 2**: The "Generative Language API Key" goes here.
+        const geminiApiKey = "YOUR_GENERATIVE_LANGUAGE_API_KEY"; // <--- PASTE GEMINI KEY HERE
 
         const appId = 'williams-wedding-2025';
         const USER_STORAGE_KEY = `weddingHubUser_${appId}`;
@@ -319,7 +300,7 @@ const firebaseConfig = {
         // --- INITIALIZATION ---
         async function initialize() {
             // Check if Firebase config is placeholder
-            if (!firebaseConfig.apiKey || firebaseConfig.apiKey === "AIzaSyD7OuSo08oqNAoMizzlIKKyJG-V4bYXogY") {
+            if (!firebaseConfig.apiKey || firebaseConfig.apiKey.startsWith("YOUR_")) {
                 document.body.innerHTML = `<div class="p-8 text-center text-red-600 bg-red-100"><strong>Configuration Needed:</strong> Please add your Firebase configuration and Gemini API key to the script section of this HTML file.</div>`;
                 return;
             }
@@ -487,11 +468,12 @@ const firebaseConfig = {
 
         // --- GEMINI API HELPER ---
         async function callGemini(prompt) {
-            if (!geminiApiKey || geminiApiKey === "AIzaSyCLgm2kLUSZ-0itnDbY_nT-qBDc7f6FZsQ") {
+            if (!geminiApiKey || geminiApiKey.startsWith("YOUR_")) {
                 showErrorModal("Gemini API key is not configured.");
                 return null;
             }
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${AIzaSyCLgm2kLUSZ-0itnDbY_nT-qBDc7f6FZsQ}`;
+            // ✅ **FIX 3**: This now correctly uses the `geminiApiKey` variable from above.
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${geminiApiKey}`;
             const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
 
             try {
@@ -569,7 +551,7 @@ const firebaseConfig = {
             btn.classList.replace('text-stone-700', 'text-white');
             container.innerHTML = filtered.map(item => `<div class="bg-white p-4 rounded-lg shadow-sm border"><div class="flex justify-between items-start"><div><p class="text-sm font-semibold text-emerald-700">${item.date}</p><h3 class="text-xl font-bold mt-1">${item.title}</h3><p class="text-stone-600 mt-1">${item.time} @ ${item.location}</p><p class="text-stone-600 mt-2">${item.description}</p></div><button onclick="getDirections('${item.location}')" class="ml-4 p-2 bg-emerald-100 text-emerald-700 rounded-lg hover:bg-emerald-200"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg></button></div></div>`).join('');
         }
-        window.getDirections = (loc) => window.open(`https://maps.google.com/maps?q=${encodeURIComponent(loc + ', Myrtle Beach, SC')}`, '_blank');
+        window.getDirections = (loc) => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(loc + ', Myrtle Beach, SC')}`, '_blank');
 
         // Photo Gallery
         function loadPhotos() {
