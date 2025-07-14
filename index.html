@@ -487,11 +487,11 @@ const firebaseConfig = {
 
         // --- GEMINI API HELPER ---
         async function callGemini(prompt) {
-            if (!geminiApiKey || geminiApiKey === "AIzaSyBB2JfD8AmSHaQ_zwJKckSneqP1FkIDpvc") {
+            if (!geminiApiKey || geminiApiKey === "AIzaSyCLgm2kLUSZ-0itnDbY_nT-qBDc7f6FZsQ") {
                 showErrorModal("Gemini API key is not configured.");
                 return null;
             }
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${AIzaSyBB2JfD8AmSHaQ_zwJKckSneqP1FkIDpvc}`;
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${AIzaSyCLgm2kLUSZ-0itnDbY_nT-qBDc7f6FZsQ}`;
             const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
 
             try {
