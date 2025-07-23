@@ -542,9 +542,29 @@
             document.querySelectorAll('.schedule-tab').forEach(b => b.classList.replace('bg-emerald-600', 'bg-stone-200') || b.classList.replace('text-white', 'text-stone-700'));
             btn.classList.replace('bg-stone-200', 'bg-emerald-600');
             btn.classList.replace('text-stone-700', 'text-white');
-            container.innerHTML = filtered.map(item => `<div class="bg-white p-4 rounded-lg shadow-sm border"><div class="flex justify-between items-start"><div><p class="text-sm font-semibold text-emerald-700">${item.date}</p><h3 class="text-xl font-bold mt-1">${item.title}</h3><p class="text-stone-600 mt-1">${item.time} @ ${item.location}</p><p class="text-stone-600 mt-2">${item.description}</p></div><button onclick="getDirections('${item.location}')" class="ml-4 p-2 bg-emerald-100 text-emerald-700 rounded-lg hover:bg-emerald-200"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg></button></div></div>`).join('');
+            container.innerHTML = filtered.map(item => {
+                const i = scheduleData.indexOf(item);
+                return `<div class="bg-white p-4 rounded-lg shadow-sm border"><div class="flex justify-between items-start"><div><p class="text-sm font-semibold text-emerald-700">${item.date}</p><h3 class="text-xl font-bold mt-1">${item.title}</h3><p class="text-stone-600 mt-1">${item.time} @ ${item.location}</p><p class="text-stone-600 mt-2">${item.description}</p></div><div class="flex space-x-2 ml-4"><button onclick="getDirections('${item.location}')" class="p-2 bg-emerald-100 text-emerald-700 rounded-lg hover:bg-emerald-200" title="Open in Maps"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg></button><button onclick="downloadEvent(${i})" class="p-2 bg-emerald-100 text-emerald-700 rounded-lg hover:bg-emerald-200" title="Add to Calendar">🗓</button></div></div></div>`;
+            }).join('');
         }
         window.getDirections = (loc) => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(loc + ', Myrtle Beach, SC')}`, '_blank');
+
+        function formatICSDate(date) {
+            return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+        }
+        window.downloadEvent = (index) => {
+            const item = scheduleData[index];
+            const start = new Date(`${item.date} ${item.time} EDT`);
+            const end = new Date(start.getTime() + 60 * 60 * 1000);
+            const ics = `BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nSUMMARY:${item.title}\nDESCRIPTION:${item.description}\nLOCATION:${item.location}\nDTSTART:${formatICSDate(start)}\nDTEND:${formatICSDate(end)}\nEND:VEVENT\nEND:VCALENDAR`;
+            const blob = new Blob([ics], { type: 'text/calendar' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${item.title.replace(/\s+/g, '_')}.ics`;
+            a.click();
+            URL.revokeObjectURL(url);
+        };
 
         // Photo Gallery
         function loadPhotos() {
@@ -822,6 +842,7 @@
         window.checkAnswer = checkAnswer;
         window.generateNewTrivia = generateNewTrivia;
         window.startTrivia = startTrivia;
+        window.downloadEvent = downloadEvent;
         // Add other game functions here if they need to be global
 
         // --- Dark mode toggle ---
