@@ -274,18 +274,19 @@
         let gameScores = {};
 
         // --- CONFIGURATION ---
-        // ✅ **FIX 1**: Pasted your Browser Key here.
+        // ✅ Firebase configuration has been added.
         const firebaseConfig = {
-          apiKey: "AIzaSyD7OuSo08oqNAoMizzlIKKyJG-V4bYXogY",
-          authDomain: "williams-wedding-hub.firebaseapp.com",
-          projectId: "williams-wedding-hub",
-          storageBucket: "williams-wedding-hub.appspot.com",
-          messagingSenderId: "554261439707",
-          appId: "1:554261439707:web:a9c9aee62db3cff7a6d8fe",
-          measurementId: "G-K6H5J1ZLNE"
+            apiKey: "AIzaSyDe-yqRr9nKvh4azzYPMRP8cvBUs7k2mfg",
+            authDomain: "williams-wedding-hub.firebaseapp.com",
+            projectId: "williams-wedding-hub",
+            storageBucket: "williams-wedding-hub.firebasestorage.app",
+            messagingSenderId: "554261439707",
+            appId: "1:554261439707:web:a9c9aee62db3cff7a6d8fe",
+            measurementId: "G-K6H5J1ZLNE" 
         };
-        // ✅ **FIX 2**: Pasted your Generative Language Key here.
-        const geminiApiKey = "AIzaSyCLgm2kLUSZ-0itnDbY_nT-qBDc7f6FZsQ";
+        
+        // ⚠️ **ACTION NEEDED**: Paste your Generative Language API Key here.
+        const geminiApiKey = "AIzaSyCV3bEJGDZOg2LHdfDusA_pdHm9dcxavpk";
 
         const appId = 'williams-wedding-2025';
         const USER_STORAGE_KEY = `weddingHubUser_${appId}`;
@@ -299,12 +300,6 @@
 
         // --- INITIALIZATION ---
         async function initialize() {
-            // Check if Firebase config is placeholder
-            if (!firebaseConfig.apiKey || firebaseConfig.apiKey.startsWith("AIzaSyD7OuSo08oqNAoMizzlIKKyJG-V4bYXogY")) {
-                document.body.innerHTML = `<div class="p-8 text-center text-red-600 bg-red-100"><strong>Configuration Needed:</strong> Please add your Firebase configuration and Gemini API key to the script section of this HTML file.</div>`;
-                return;
-            }
-            
             // Initialize Firebase services
             app = initializeApp(firebaseConfig);
             auth = getAuth(app);
@@ -468,11 +463,10 @@
 
         // --- GEMINI API HELPER ---
         async function callGemini(prompt) {
-            if (!geminiApiKey || geminiApiKey.startsWith("AIzaSyCLgm2kLUSZ-0itnDbY_nT-qBDc7f6FZsQ")) {
-                showErrorModal("Gemini API key is not configured.");
+            if (!geminiApiKey || geminiApiKey === "AIzaSyCV3bEJGDZOg2LHdfDusA_pdHm9dcxavpk") {
+                showErrorModal("Gemini API key is not configured. Please ask the developer to add it.");
                 return null;
             }
-            // ✅ **FIX 3**: This now correctly uses the `geminiApiKey` variable from above.
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${geminiApiKey}`;
             const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
 
@@ -486,7 +480,6 @@
                 const result = await response.json();
                 
                 if (result.candidates?.[0]?.content?.parts?.[0]?.text) {
-                    // **FIX for JSON parsing error**: Clean the response text
                     let text = result.candidates[0].content.parts[0].text;
                     return text.replace(/```json\s*|\s*```/g, '').trim();
                 } else {
