@@ -149,13 +149,6 @@
             position: relative;
             overflow: hidden;
             animation: fade-in-scale 0.5s ease-out;
-            color: white;
-            font-size: 2rem;
-            font-weight: bold;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            min-width: 80px;
-            text-align: center;
         }
         
         .countdown-digit::before {
@@ -1407,16 +1400,16 @@
         let lightboxPhotos = [];
         let currentLightboxIndex = 0;
 
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyDe-yqRr9nKvh4azzYPMRP8cvBUs7k2mfg",
-  authDomain: "williams-wedding-hub.firebaseapp.com",
-  projectId: "williams-wedding-hub",
-  storageBucket: "williams-wedding-hub.appspot.com",
-  messagingSenderId: "554261439707",
-  appId: "1:554261439707:web:a9c9aee62db3cff7a6d8fe",
-  measurementId: "G-K6H5J1ZLNE"
-};
+        // --- CONFIGURATION ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyDe-yqRr9nKvh4azzYPMRP8cvBUs7k2mfg",
+            authDomain: "williams-wedding-hub.firebaseapp.com",
+            projectId: "williams-wedding-hub",
+            storageBucket: "williams-wedding-hub.firebasestorage.app",
+            messagingSenderId: "554261439707",
+            appId: "1:554261439707:web:a9c9aee62db3cff7a6d8fe",
+            measurementId: "G-K6H5J1ZLNE" 
+        };
         
         const geminiApiKey = "AIzaSyCV3bEJGDZOg2LHdfDusA_pdHm9dcxavpk";
         const appId = 'williams-wedding-2025';
@@ -1448,8 +1441,6 @@ const firebaseConfig = {
                         localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(currentUser));
                         showApp();
                     } else {
-                        // This case handles if auth state exists but DB doc is missing.
-                        // The join button logic will create the doc.
                         loginScreen.classList.remove('hidden');
                         appContainer.classList.add('hidden');
                     }
@@ -1484,27 +1475,17 @@ const firebaseConfig = {
                 const user = userCredential.user;
                 
                 const userDocRef = doc(db, `artifacts/${appId}/public/data/users/${user.uid}`);
-                const newUserData = {
+                await setDoc(userDocRef, {
                     displayName: displayName,
                     relationship: relationship,
+                    createdAt: serverTimestamp(),
                     points: 0,
                     achievements: [],
                     photoCount: 0,
                     postCount: 0
-                };
-
-                await setDoc(userDocRef, {
-                    ...newUserData,
-                    createdAt: serverTimestamp(),
                 });
                 
-                // **FIX:** Manually set current user and show the app to avoid race condition
-                currentUser = { uid: user.uid, ...newUserData };
-                localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(currentUser));
-                
-                showApp();
                 celebrateJoin();
-
             } catch (error) {
                 console.error("Error joining event: ", error);
                 showToast("Could not join. Please try again.", "error");
@@ -1768,7 +1749,7 @@ const firebaseConfig = {
 
         // --- GEMINI API ---
         async function callGemini(prompt) {
-            if (!geminiApiKey || geminiApiKey === "AIzaSyCV3bEJGDZOg2LHdfDusA_pdHm9dcxavpk") {
+            if (!geminiApiKey || geminiApiKey === "YOUR_API_KEY_HERE") {
                 showToast("AI features not configured", "error");
                 return null;
             }
